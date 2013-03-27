@@ -25,7 +25,7 @@ There are 4 pins that you need to connect from the WiFly module to the Arduino: 
 
 These 4 pins correspond to the following on the WiFly module
 
-![WiFly](https://raw.github.com/lifegraph/graphbutton-wifly/master/imgs/wifly.png)
+![WiFly](https://raw.github.com/lifegraph/hw-tutorial/master/imgs/wifly.png)
 
 * Pin 1 &mdash; Vcc. Connect this to the **3.3v pin** on the Arduino.
 * Pin 2 &mdash; TX. Digital pin 2 on the Arduino.

@@ -6,8 +6,6 @@ An Arduino tutorial for connecting to the internet
 * [A WiFly Module](https://www.sparkfun.com/products/10822) ($35)
 * [An Arduino](https://www.sparkfun.com/products/11021) ($30)
 * A soldering iron & some solder
-* A switch or some wire
-* A resistor (~10k ohms)
 
 ##Setting up the Arduino
 
@@ -16,14 +14,6 @@ Make sure you have the Arduino Software installed: http://arduino.cc/en/main/sof
 Open up the Arduino IDE. Make sure your Arduino works by going to File -> Examples -> Basic -> Blink. Upload the code to your Arduino by selecting the correct usb port on Tools->Serial Port and select the correct arduino board from Tools->board. Upload your the blink code by clicking on the upload button. 
 
 This will make a light on your Arduino blink and is a super basic test of whether everything is working. 
-
-## Adding the Button
-
-You'll need to connect a button between digital pin 12 and ground on the Arduino as well. Pushing down this button will make the Arduino post to Facebook. 
-
-We'll also add a pull up resistor between pin 12 and +5v, otherwise the pin might read 0 at random times. The general recommended resistance is around 10k but it'll work with other resistances as well. You just don't want a resistance that is too low or else it'll short between Vcc and Ground.
-
-![circuit](https://raw.github.com/lifegraph/graphbutton-wifly/master/imgs/circuit.png)
 
 ##Setting up the WiFly
 
@@ -50,10 +40,14 @@ We'll be using [WiFlyHQ](https://github.com/harlequin-tech/WiFlyHQ) as our libra
 
 In order to setup WiFlyHQ, you'll need to download it to your Arduino libaries. On OSX this is typically in `~/Documents/Arduino/libaries/`. If you don't have a library folder, you'll need to make one. 
 
+If you use git you can download the library with the following
+
 ```
 cd ~/Documents/Arduino/libraries;
 git clone https://github.com/harlequin-tech/WiFlyHQ;
 ```
+
+If not, you can [download the WiFlyHQ as a zip file](https://github.com/harlequin-tech/WiFlyHQ/archive/master.zip). You'll need to rename this folder "WiFlyHQ" and place it in the Arduino /libraries folder or else the Arduino IDE can't find it. 
 
 After you add the library, you'll need to restart the Arduino IDE for it to pick up the library. If you've added it in the right place, you should be able to see the WiFlyHQ library if you go to Sketch -> Import Library.
 
@@ -66,22 +60,13 @@ const char mySSID[] = "your_ssid";
 const char myPassword[] = "your_password";
 ```
 
-You'll also want to change the message that `helloworld.ino` sends to the internet
-
-```ino
-String name = "test_user"; // put your name in here
-String message = "hello world"; // put your message here
-```
-
 ## Making HTTP Requests
 
 After you've modified `helloworld.ino` and saved it, you'll need to load the code to the Arduino through the Arduino IDE. Once the code is loaded on to the Arduino, you can go to Tools->Serial Monitor to bring up the serial output of the Arduino. You should see it connect to your wifi network.
 
-When you press the button (or close the switch), you should be able to see the Arduino sending a POST request to lifegraphlabs.com with your name and message. 
-
-You can go to www.lifegraphlabs.com to see the message.
+It should try to grab the www.lifegraphlabs.com/hello_world site and print out the message "hello world"
 
 ##Further examples
 
-* GraphButton - press the button and have it post a message to your Facebook
-* Notification light - a light that lights up when you have a new facebook notification
+* [GraphButton](https://github.com/lifegraph/graphbutton-wifly) - press the button and have it post a message to your Facebook
+* [Notification light](https://github.com/lifegraph/notificationlight) - a light that lights up when you have a new facebook notification

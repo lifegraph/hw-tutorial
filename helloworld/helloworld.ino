@@ -1,9 +1,9 @@
 /*
- * Modified from the WiFlyHQ httpclient.ino example
+ * Modified from WiFlyHQ Example httpclient.ino
  *
- * This sketch implements a simple Web client that connects to 
- * lifegraphlabs.com, sends a POST, and then sends the result 
- * to the Serial monitor.
+ * This sketch implements a simple Web client that connects to a 
+ * web server, sends a GET, and then sends the result to the 
+ * Serial monitor.
  *
  * This sketch is released to the public domain.
  *
@@ -21,16 +21,19 @@ const char mySSID[] = "your_ssid";
 const char myPassword[] = "your_password";
 
 const char site[] = "www.lifegraphlabs.com";
-int pushButton = 12; // define our push button
-
+int light = 12; // define our light
+boolean check_next = false;
+long curr_loop = 0;
+long MAX_LOOP = 100000;
 void terminal();
+char prev_ch;
 
 void setup()
 {
     char buf[32];
-
+    
     Serial.begin(9600);
-    pinMode(pushButton, INPUT);
+    pinMode(light, OUTPUT);
 
     Serial.println("Starting");
     Serial.print("Free memory: ");
@@ -39,23 +42,23 @@ void setup()
     wifiSerial.begin(9600);
     if (!wifly.begin(&wifiSerial, &Serial)) {
         Serial.println("Failed to start wifly");
-	terminal();
+    terminal();
     }
 
     /* Join wifi network if not already associated */
     if (!wifly.isAssociated()) {
-	/* Setup the WiFly to connect to a wifi network */
-	Serial.println("Joining network");
-	wifly.setSSID(mySSID);
-	wifly.setPassphrase(myPassword);
-	wifly.enableDHCP();
+    /* Setup the WiFly to connect to a wifi network */
+    Serial.println("Joining network");
+    wifly.setSSID(mySSID);
+    wifly.setPassphrase(myPassword);
+    wifly.enableDHCP();
 
-	if (wifly.join()) {
-	    Serial.println("Joined wifi network");
-	} else {
-	    Serial.println("Failed to join wifi network");
-	    terminal();
-	}
+    if (wifly.join()) {
+        Serial.println("Joined wifi network");
+    } else {
+        Serial.println("Failed to join wifi network");
+        terminal();
+    }
     } else {
         Serial.println("Already joined network");
     }
@@ -90,48 +93,50 @@ void setup()
 
 void loop()
 {
-    if (wifly.available() > 0) {
-	char ch = wifly.read();
-	Serial.write(ch);
-	if (ch == '\n') {
-	    /* add a carriage return */ 
-	    Serial.write('\r');
-	}
+    if(wifly.available() > 0) {
+    char ch = wifly.read();
+        Serial.write(ch);
+        if (check_next) {
+          
+          if (isdigit(ch) && atoi(&ch) > 0) {
+            // turn on the light
+            digitalWrite(light, HIGH);
+          } else if (isdigit(ch) && atoi(&ch) == 0) {
+            // turn off the light
+            digitalWrite(light, LOW);
+          }
+          check_next = false;
+        }
+    if (ch == '\n') {
+      Serial.write('\r');
+          check_next = true;
     }
-
-    if (Serial.available() > 0) {
-	wifly.write(Serial.read());
     }
-
-    if (digitalRead(pushButton)) {
-        String name = "test_user"; // put your name in here
-        String message = "hello world"; // put your message here
-        String params = "{message: '"+message+"', name: '"+name+"'}";
-        String paramsLength = String(params.length());
-        /* Send the request */
-        wifly.println("POST /messages HTTP/1.1"); // paste your number here
-        wifly.println("Host: www.lifegraphlabs.com:80");
-        wifly.println("Content-type: application/json");
-        wifly.println("Accept: application/json");
-        wifly.print("Content-Length: ");
-        wifly.println(paramsLength);
-        wifly.println("User-Agent: lifegraph/0.0.1");
-        wifly.println();
-        wifly.println(params);
+    
+    if (curr_loop > MAX_LOOP){
+      curr_loop = 0;
+      getRequest();
     }
+    curr_loop++;
 }
 
+void getRequest(){
+  wifly.println("GET /hello_world HTTP/1.1"); // paste your number here
+  wifly.println("Host: www.lifegraphlabs.com:80");
+  wifly.println("User-Agent: lifegraph/0.0.1");
+  wifly.println();
+}
 /* Connect the WiFly serial to the serial monitor. */
 void terminal()
 {
     while (1) {
-	if (wifly.available() > 0) {
-	    Serial.write(wifly.read());
-	}
+    if (wifly.available() > 0) {
+        Serial.write(wifly.read());
+    }
 
 
-	if (Serial.available() > 0) {
-	    wifly.write(Serial.read());
-	}
+    if (Serial.available() > 0) {
+        wifly.write(Serial.read());
+    }
     }
 }

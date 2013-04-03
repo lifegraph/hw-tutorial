@@ -28,8 +28,8 @@ These 4 pins correspond to the following on the WiFly module
 ![WiFly](https://raw.github.com/lifegraph/hw-tutorial/master/imgs/wifly.png)
 
 * Pin 1 &mdash; Vcc. Connect this to the **3.3v pin** on the Arduino.
-* Pin 2 &mdash; TX. Digital pin 2 on the Arduino.
-* Pin 3 &mdash; RX. Digital pin 3 on the Arduino.
+* Pin 2 &mdash; TX. Digital pin 9 on the Arduino.
+* Pin 3 &mdash; RX. Digital pin 10 on the Arduino.
 * Pin 10 &mdash; Connect this to GND.
 
 ![WiFly all wired up](http://i.imgur.com/EDxmchO.png)
